@@ -1,0 +1,23 @@
+mysql: &mysql
+  adapter: mysql2
+  username: <%= ENV['MYSQL_USER'] || 'root' %>
+  host: localhost
+
+octopus:
+  environments:
+  - development
+  entirely_sharded: true
+  <<: *mysql
+
+  development:
+    shards:
+<%=
+(0..3).each.map do |id|
+<<-SHARD
+      shard_#{id}:
+        database: octopussy_shard_#{id}
+        shared_pool: true
+        <<: *mysql
+SHARD
+end.join
+%>
