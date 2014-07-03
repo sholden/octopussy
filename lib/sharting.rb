@@ -10,8 +10,8 @@ module Sharting
   end
 
   def self.shard_for_key(key)
-    shard_number = Digest::SHA2.hexidigest(key).to_i(16) % SHARD_COUNT
-    :"octopussy_shard_#{shard_number}"
+    shard_number = Digest::SHA2.hexdigest(key).to_i(16) % SHARD_COUNT
+    :"shard_#{shard_number}"
   end
 
   def self.using(shard, &block)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140701181507) do
+ActiveRecord::Schema.define(:version => 20140703183741) do
 
   create_table "options", :force => true do |t|
     t.integer  "vehicle_id"
@@ -37,6 +37,9 @@ ActiveRecord::Schema.define(:version => 20140701181507) do
   end
 
   add_index "prices", ["vehicle_id"], :name => "index_prices_on_vehicle_id"
+
+  create_table "shard_seq_tbl", :primary_key => "nextval", :force => true do |t|
+  end
 
   create_table "users", :force => true do |t|
     t.string   "name"
