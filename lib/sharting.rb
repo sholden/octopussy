@@ -3,7 +3,7 @@ module Sharting
     Octopus.enabled?
   end
 
-  def self.key(key, &block)
+  def self.using_key(key, &block)
     using(shard_for_key(key), &block)
   end
 
