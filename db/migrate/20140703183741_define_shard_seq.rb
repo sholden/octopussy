@@ -26,9 +26,7 @@ class DefineShardSeq < ActiveRecord::Migration
       CREATE FUNCTION now_msec RETURNS STRING SONAME "now_msec.so";
     SQL
 
-    result = build_client.query(sql)
-
-    puts result.inspect
+    build_client.query(sql)
   end
 
   def down

@@ -38,7 +38,7 @@ module Sharting
   end
 
   def self.generate_uid(key)
-    key(key) do
+    using_key(key) do
       sql = 'select shard_nextval() as next_seq, now_msec() as msec'
       next_seq, msec = ActiveRecord::Base.connection.execute(sql).first
 

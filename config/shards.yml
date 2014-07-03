@@ -1,3 +1,4 @@
+<% require './lib/sharting' %>
 mysql: &mysql
   adapter: mysql2
   username: <%= ENV['MYSQL_USER'] || 'root' %>
