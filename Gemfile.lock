@@ -1,5 +1,7 @@
-PATH
-  remote: ../octopus
+GIT
+  remote: https://github.com/sholden/octopus.git
+  revision: a7e5605310dcfef5ccfda0276919c9ea8a0e6b57
+  branch: multi_db_connection_pools
   specs:
     ar-octopus (0.8.1)
       activerecord (>= 3.2.0, < 4.1.0)

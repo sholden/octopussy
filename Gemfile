@@ -6,7 +6,7 @@ gem 'rails', '3.2.19'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2'
-gem 'ar-octopus', path: '../octopus', require: 'octopus'
+gem 'ar-octopus', require: 'octopus', git: 'https://github.com/sholden/octopus.git', branch: 'multi_db_connection_pools'
 
 # Gems used only for assets and not required
 # in production environments by default.
