@@ -16,7 +16,7 @@ module Sharting
     shards.keys.map(&:to_sym)
   end
 
-  def database_name(shard_name)
+  def self.database_name(shard_name)
     connection_proxy = ActiveRecord::Base.connection
     connection_proxy.send(:database_name, shard_name)
   end
