@@ -5,7 +5,7 @@ class CreateUsers < ActiveRecord::Migration
     create_table :users, id: false do |t|
       t.integer :id, limit: 8, primary: true, null: false
       t.string :name
-      t.string :crypted_email
+      t.string :email
       t.string :crypted_password, :limit => 128
       t.string  :phone, :limit => 20
       t.timestamps

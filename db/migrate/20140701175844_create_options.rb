@@ -4,7 +4,7 @@ class CreateOptions < ActiveRecord::Migration
   def change
     create_table :options, id: false do |t|
       t.integer :id, limit: 8, primary: true, null: false
-      t.integer :vehicle_id
+      t.integer :vehicle_id, null: false
 
       t.text    :description
       t.string  :opt_code, :limit => 20

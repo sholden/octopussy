@@ -17,4 +17,10 @@ namespace :db do
       end
     end
   end
+
+  desc 'Load seed data'
+  task :load_data => :environment do
+    loader = DataLoader.new(Rails.root.join('data'))
+    loader.load!
+  end
 end
