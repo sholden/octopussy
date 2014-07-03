@@ -2,7 +2,8 @@ class CreateOptions < ActiveRecord::Migration
   using(*Sharting.shard_names)
 
   def change
-    create_table :options do |t|
+    create_table :options, id: false do |t|
+      t.integer :id, limit: 8, primary: true, null: false
       t.integer :vehicle_id
 
       t.text    :description
