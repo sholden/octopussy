@@ -42,7 +42,7 @@ module Sharting
       sql = 'select shard_nextval() as next_seq, now_msec() as msec'
       next_seq, msec = ActiveRecord::Base.connection.execute(sql).first
 
-      uid = msec << (64-41)
+      uid = msec.to_i << (64-41)
       uid |= shard_number(key) << (64-41-13)
       uid | next_seq
     end

@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(:version => 20140703183741) do
   create_table "shard_seq_tbl", :primary_key => "nextval", :force => true do |t|
   end
 
-  create_table "users", :force => true do |t|
+  create_table "users", :id => false, :force => true do |t|
     t.string   "name"
     t.string   "crypted_email"
     t.string   "crypted_password", :limit => 128
