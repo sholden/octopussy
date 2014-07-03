@@ -1,6 +1,17 @@
 module Sharting
+  SHARD_COUNT = 4
+
   def self.enabled?
     Octopus.enabled?
+  end
+
+  def self.key(key, &block)
+    using(shard_for_key(key), &block)
+  end
+
+  def self.shard_for_key(key)
+    shard_number = Digest::SHA2.hexidigest(key).to_i(16) % SHARD_COUNT
+    :"octopussy_shard_#{shard_number}"
   end
 
   def self.using(shard, &block)
