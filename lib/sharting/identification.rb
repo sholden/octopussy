@@ -1,6 +1,7 @@
 module Sharting
   module Identification
     def self.included(base)
+      base.primary_key = :id
       base.send(:before_create, :assign_id)
     end
 
