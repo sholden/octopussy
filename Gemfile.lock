@@ -39,6 +39,7 @@ GEM
       multi_json (~> 1.0)
     arel (3.0.3)
     builder (3.0.4)
+    coderay (1.1.0)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -48,6 +49,9 @@ GEM
     coffee-script-source (1.7.0)
     erubis (2.7.0)
     execjs (2.2.1)
+    hbase-stargate (1.6.1)
+      patron
+      yajl-ruby
     hike (1.2.3)
     i18n (0.6.9)
     journey (1.0.4)
@@ -58,10 +62,16 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    method_source (0.8.2)
     mime-types (1.25.1)
     multi_json (1.10.1)
     mysql2 (0.3.16)
+    patron (0.4.18)
     polyglot (0.3.5)
+    pry (0.10.0)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -87,11 +97,14 @@ GEM
     rake (10.3.2)
     rdoc (3.12.2)
       json (~> 1.4)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
     sass (3.3.9)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
+    slop (3.5.0)
     sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -106,6 +119,7 @@ GEM
     uglifier (2.5.1)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    yajl-ruby (1.2.1)
 
 PLATFORMS
   ruby
@@ -113,8 +127,11 @@ PLATFORMS
 DEPENDENCIES
   ar-octopus!
   coffee-rails (~> 3.2.1)
+  hbase-stargate
   jquery-rails
   mysql2
+  pry
   rails (= 3.2.19)
+  rest-client
   sass-rails (~> 3.2.3)
   uglifier (>= 1.0.3)
