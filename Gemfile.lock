@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/sholden/octopus.git
-  revision: a7e5605310dcfef5ccfda0276919c9ea8a0e6b57
+  revision: 41157e7c60d89ffb624617ebec59924ab5111fbd
   branch: multi_db_connection_pools
   specs:
     ar-octopus (0.8.1)
@@ -38,6 +38,8 @@ GEM
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
     arel (3.0.3)
+    bootstrap-sass (3.2.0.0)
+      sass (~> 3.2)
     builder (3.0.4)
     coderay (1.1.0)
     coffee-rails (3.2.2)
@@ -126,6 +128,7 @@ PLATFORMS
 
 DEPENDENCIES
   ar-octopus!
+  bootstrap-sass
   coffee-rails (~> 3.2.1)
   hbase-stargate
   jquery-rails

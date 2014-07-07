@@ -17,4 +17,15 @@ namespace :db do
       end
     end
   end
+
+  desc 'Load seed data'
+  task :load_data => :environment do
+    loader = DataLoader.new(Rails.root.join('data'))
+    loader.load!
+  end
+
+  desc 'Reset all passwords'
+  task :reset_passwords => :environment do
+    Sharting.each { User.update_all(crypted_password: User.encrypt_password('password')) }
+  end
 end

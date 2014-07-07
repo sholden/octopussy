@@ -25,6 +25,12 @@ Octopussy::Application.routes.draw do
   #     end
   #   end
 
+  #/api/users/#{url encoded email}/
+
+  #/sessions
+
+
+
   # Sample resource route with sub-resources:
   #   resources :products do
   #     resources :comments, :sales
