@@ -1,0 +1,18 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}/
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
+    = csrf_meta_tags
+    %title Octopussy
+    / Bootstrap
+    = stylesheet_link_tag 'application'
+    /[if lt IE 9]
+      <haml:loud> javascript_include_tag 'polyfills' </haml:loud>
+  %body
+    .container
+      = render partial: 'layouts/navbar'
+      = render partial: 'layouts/alerts'
+      = yield
+    = javascript_include_tag 'application'

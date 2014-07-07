@@ -1,0 +1,8 @@
+= form_tag(sessions_path, role: 'form', class: 'col-xs-12 col-md-4 col-md-offset-4') do
+  .form-group
+    = label_tag :identifier, 'Email'
+    = text_field_tag(:user_email, params[:user_email], class: 'form-control', placeholder: 'Enter email')
+  .form-group
+    = label_tag :credential, 'Password'
+    = password_field_tag(:password, '', class: 'form-control', placeholder: 'Password')
+  = button_tag('Submit', type: 'submit', class: 'btn btn-default')

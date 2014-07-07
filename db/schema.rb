@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(:version => 20140703183741) do
 
   create_table "options", :id => false, :force => true do |t|
     t.integer  "id",                :limit => 8,                               :null => false
-    t.integer  "vehicle_id",                                                   :null => false
+    t.integer  "vehicle_id",        :limit => 8,                               :null => false
     t.text     "description"
     t.string   "opt_code"
     t.boolean  "is_quick_package"
@@ -32,7 +32,7 @@ ActiveRecord::Schema.define(:version => 20140703183741) do
 
   create_table "prices", :id => false, :force => true do |t|
     t.integer  "id",         :limit => 8,                               :null => false
-    t.integer  "vehicle_id",                                            :null => false
+    t.integer  "vehicle_id", :limit => 8,                               :null => false
     t.decimal  "price",                   :precision => 8, :scale => 2
     t.datetime "created_at",                                            :null => false
     t.datetime "updated_at",                                            :null => false
@@ -56,7 +56,7 @@ ActiveRecord::Schema.define(:version => 20140703183741) do
 
   create_table "vehicles", :id => false, :force => true do |t|
     t.integer  "id",             :limit => 8,                                  :null => false
-    t.integer  "user_id",                                                      :null => false
+    t.integer  "user_id",        :limit => 8,                                  :null => false
     t.integer  "year"
     t.string   "make",           :limit => 100
     t.string   "model",          :limit => 100

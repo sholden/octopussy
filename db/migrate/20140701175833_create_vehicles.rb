@@ -3,8 +3,8 @@ class CreateVehicles < ActiveRecord::Migration
 
   def change
     create_table :vehicles, id: false do |t|
-      t.integer :id, limit: 8, primary: true, null: false
-      t.integer :user_id, null: false
+      t.integer :id, limit: 8, unsigned: true, primary: true, null: false
+      t.integer :user_id, limit: 8, unsigned: true, null: false
       
       t.integer :year
       t.string :make, :limit => 100

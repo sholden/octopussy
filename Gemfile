@@ -6,8 +6,10 @@ gem 'rails', '3.2.19'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2'
+gem 'activerecord-mysql-unsigned'
 gem 'ar-octopus', require: ['octopus', 'octopus/mysql2_adapter'], git: 'https://github.com/sholden/octopus.git', branch: 'multi_db_connection_pools'
 gem 'bootstrap-sass'
+gem 'haml'
 
 # Gems used only for assets and not required
 # in production environments by default.

@@ -4,4 +4,8 @@ class Vehicle < ActiveRecord::Base
   belongs_to :user
   has_many :prices
   has_many :options
+
+  def name
+    "#{year} #{make} #{model} #{trim}"
+  end
 end
