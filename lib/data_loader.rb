@@ -31,7 +31,7 @@ class DataLoader
 
         Array(vehicles_by_buyer[buyer_id]).each do |vehicle_attributes|
           vehicle_attributes = vehicle_attributes.to_hash
-          vehicle_id = vehicle_attributes.delete(:vehicle_id)
+          vehicle_id = vehicle_attributes.delete(:id)
           vehicle = user.vehicles.create!(vehicle_attributes.except(:user_id))
 
           Array(prices_by_vehicle[vehicle_id]).each do |price_attributes|
@@ -40,7 +40,7 @@ class DataLoader
           end
 
           Array(options_by_vehicle[vehicle_id]).each do |option_attributes|
-            price_attributes= price_attributes.to_hash
+            option_attributes = option_attributes.to_hash
             vehicle.options.create!(option_attributes.except(:vehicle_id))
           end
         end
