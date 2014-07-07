@@ -1,4 +1,6 @@
 module Sharting
+  extend Enumerable
+
   def self.enabled?
     Octopus.enabled?
   end
@@ -49,10 +51,16 @@ module Sharting
     Octopus.using(shard, &block)
   end
 
-  def self.inject(*args)
-    options = args.extract_options!
-    to_use = options[:using] && Array(options[:using]) || shard_names
-    to_use.inject(*args) { |memo, shard| using(shard) { yield(memo, shard) if block_given? } }
+  def self.each(using: shard_names)
+    if block_given?
+      Array(using).each do |shard_name|
+        using(shard_name) do
+          yield shard_name
+        end
+      end
+    else
+      to_enum(:each)
+    end
   end
 
   def self.shards
