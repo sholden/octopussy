@@ -1,0 +1,23 @@
+.pull-right
+  = link_to('#') do
+    %span.glyphicon.glyphicon-plus
+    New Vehicle
+%h2
+  Vehicles
+
+%table.table.table-striped
+  %thead
+    %tr
+      %th Id
+      %th Year
+      %th Make
+      %th Model
+      %th Trim
+  %tbody
+    - @vehicles.each do |vehicle|
+      %tr
+        %td= link_to(vehicle.id, vehicle)
+        %td= vehicle.year
+        %td= vehicle.make
+        %td= vehicle.model
+        %td= vehicle.trim

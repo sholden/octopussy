@@ -1,19 +1,21 @@
 class ApplicationController < ActionController::Base
+  class AuthenticationError < StandardError; end
+
   protect_from_forgery
 
-  before_filter :select_shard
+  around_filter :select_shard
 
-  rescue_from ActiveRecord::RecordNotFound do |err|
+  rescue_from ActiveRecord::RecordNotFound do
     render nothing: true, status: :not_found
   end
 
-  rescue_from ActiveRecord::RecordInvalid do |err|
+  rescue_from ActiveRecord::RecordInvalid do
     render nothing: true, status: :unprocessable_entity
   end
 
   rescue_from AuthenticationError do
     respond_to do |format|
-      format.html { redirect_to sessions_path }
+      format.html { redirect_to new_session_path }
       format.all { render nothing: true, status: :unauthorized }
     end
   end
@@ -26,7 +28,10 @@ class ApplicationController < ActionController::Base
 
   def current_user
     unless defined?(@current_user)
-      @current_user = if session[:user_email]
+      @current_user = if session['X-Authentication-Token']
+                        token = AuthenticationToken.parse(session['X-Authentication-Token'])
+                        Sharting.using_key(token.user_email){ token.user }
+                      elsif session[:user_email]
                         Sharting.using_key(session[:user_email]) { User.find_by_email(session[:user_email]) }
                       end
     end
@@ -48,20 +53,12 @@ class ApplicationController < ActionController::Base
   end
 
   def select_shard
-    select_current_user_shard { select_param_user_shard { yield } }
+    select_current_user_shard { yield }
   end
 
   def select_current_user_shard
     if logged_in?
       Sharting.using_key(current_user.email) { yield }
-    else
-      yield
-    end
-  end
-
-  def select_param_user_shard
-    if params[:user_email].present?
-      Sharting.using_key(params[:user_email])
     else
       yield
     end

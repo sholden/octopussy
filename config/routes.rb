@@ -29,6 +29,14 @@ Octopussy::Application.routes.draw do
 
   #/sessions
 
+  resources :sessions, only: [:create, :new] do
+    delete '', on: :collection, to: 'sessions#destroy'
+  end
+
+  resources :vehicles
+
+  root to: 'vehicles#index'
+
 
 
   # Sample resource route with sub-resources:

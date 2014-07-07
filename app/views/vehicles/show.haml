@@ -1,0 +1,11 @@
+.h1= @vehicle.name
+
+.h2 Options
+.ul
+  - @vehicle.options.each do |option|
+    .li= option.description
+
+.h2 Offers
+.ul
+  - @vehicle.prices.each do |price|
+    .li= number_to_currency price.price
