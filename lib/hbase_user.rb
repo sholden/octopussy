@@ -1,5 +1,3 @@
-require 'stargate'
-
 class HbaseUser
   attr_accessor :row, :columns, :attributes
 
