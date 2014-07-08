@@ -14,4 +14,8 @@ class User < ActiveRecord::Base
   def password=(password)
     self.crypted_password = self.class.encrypt_password(password)
   end
+
+  def serializable_hash(*)
+    super.merge(vehicles: vehicles.includes(:prices, :options).map(&:serializable_hash))
+  end
 end
