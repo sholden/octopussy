@@ -8,4 +8,11 @@ class Vehicle < ActiveRecord::Base
   def name
     "#{year} #{make} #{model} #{trim}"
   end
+
+  def serializable_hash(*)
+    super.merge(
+      options: options.map(&:serializable_hash),
+      prices: prices.map(&:serializable_hash)
+    )
+  end
 end

@@ -27,4 +27,8 @@ class User < ActiveRecord::Base
     }
 
   end
+
+  def serializable_hash(*)
+    super.merge(vehicles: vehicles.includes(:prices, :options).map(&:serializable_hash))
+  end
 end

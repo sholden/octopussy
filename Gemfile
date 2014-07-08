@@ -13,6 +13,7 @@ gem 'activerecord-mysql-unsigned'
 gem 'ar-octopus', require: ['octopus', 'octopus/mysql2_adapter'], git: 'https://github.com/sholden/octopus.git', branch: 'multi_db_connection_pools'
 gem 'bootstrap-sass'
 gem 'haml'
+gem 'faraday'
 
 # Gems used only for assets and not required
 # in production environments by default.

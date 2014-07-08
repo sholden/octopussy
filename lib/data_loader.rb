@@ -24,11 +24,7 @@ class DataLoader
     option_headers = [:vehicle_id, :description, :opt_code, :is_quick_package, :is_option_package, :is_dio_option, :msrp, :invoice, :opt_kind]
     options_by_vehicle = CSV.open(data_path + '/option.csv', headers: option_headers, converters: [:integer, bool_converter]).group_by{|r| r[:vehicle_id]}
 
-    
-    index = 0
     buyers_by_id.each do |buyer_id, buyer_attributes|
-      index += 1
-      puts "loaded #{index} users" if index % 1000 == 0
       buyer_attributes = buyer_attributes.to_hash
       Sharting.using_key(buyer_attributes[:email]) do
         user = User.create!(buyer_attributes.except(:id).merge({:password => 'password'}))
