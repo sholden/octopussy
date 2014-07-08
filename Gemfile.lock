@@ -55,11 +55,11 @@ GEM
     coffee-script-source (1.7.0)
     erubis (2.7.0)
     execjs (2.2.1)
+    haml (4.0.5)
+      tilt
     hbase-stargate (1.6.1)
       patron
       yajl-ruby
-    haml (4.0.5)
-      tilt
     hike (1.2.3)
     i18n (0.6.9)
     journey (1.0.4)
@@ -137,8 +137,8 @@ DEPENDENCIES
   ar-octopus!
   bootstrap-sass
   coffee-rails (~> 3.2.1)
-  hbase-stargate
   haml
+  hbase-stargate
   jquery-rails
   mysql2
   pry

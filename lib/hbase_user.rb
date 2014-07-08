@@ -15,6 +15,11 @@ class HbaseUser
       super sym,args,block
     end
   end
+
+  def self.create(key,data)
+    connection.create_row(table,key,Time.now.to_i,data)
+  end
+
   def self.find(uid)
     row = connection.show_row(table,uid)
     new(row)
