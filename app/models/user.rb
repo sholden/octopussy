@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   include Sharting::Identification
 
-  has_many :vehicles
+  has_many :vehicles, dependent: :destroy
 
   after_create :replicate_to_hbase
 

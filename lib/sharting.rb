@@ -7,16 +7,17 @@ module Sharting
 
   def self.using_key(key, &block)
     older_key = self.current_key
-    older_shard_number = self.current_shard_number
 
     begin
       self.current_key = key
-      self.current_shard_number = shard_number(key)
-      using(shard_name(self.current_shard_number), &block)
+      using(shard_name(calculate_shard_number(key)), &block)
     ensure
       self.current_key = older_key
-      self.current_shard_number = older_shard_number
     end
+  end
+
+  def self.current_shard
+    Octopus.current_shard
   end
 
   def self.current_key
@@ -28,22 +29,22 @@ module Sharting
   end
 
   def self.current_shard_number
-    Thread.current['sharting.current_shard_number']
+    shard_number_for_shard(current_shard)
   end
 
-  def self.current_shard_number=(shard_number)
-    Thread.current['sharting.current_shard_number'] = shard_number
+  def self.shard_number_for_shard(shard_name)
+    slave_shard_names.index(shard_name)
   end
 
   def self.shard_for_key(key)
-    shard_name(shard_number(key))
+    shard_name(calculate_shard_number(key))
   end
 
   def self.shard_name(shard_number)
     :"shard_#{shard_number}"
   end
 
-  def self.shard_number(key)
+  def self.calculate_shard_number(key)
     Digest::SHA1.hexdigest(key).to_i(16) % number_of_shards
   end
 
@@ -72,6 +73,10 @@ module Sharting
     shards.keys.map(&:to_sym)
   end
 
+  def self.slave_shard_names
+    (shard_names - [:master])
+  end
+
   def self.database_name(shard_name)
     connection_proxy = ActiveRecord::Base.connection
     connection_proxy.send(:database_name, shard_name)
@@ -81,13 +86,16 @@ module Sharting
     Rails.configuration.number_of_shards
   end
 
-  def self.generate_uid
-    raise 'Not on a shard!' unless current_shard_number
-    sql = 'select shard_nextval() as next_seq, now_msec() as msec'
-    next_seq, msec = ActiveRecord::Base.connection.execute(sql).first
+  def self.generate_uid(shard_name = nil)
+    shard_name ||= current_shard
+    raise 'No shard specified!' unless shard_name
+    using(shard_name) do
+      sql = 'select shard_nextval() as next_seq, now_msec() as msec'
+      next_seq, msec = ActiveRecord::Base.connection.execute(sql).first
 
-    uid = msec.to_i << (64-41)
-    uid |= current_shard_number << (64-41-13)
-    uid | next_seq
+      uid = msec.to_i << (64-41)
+      uid |= shard_number_for_shard(shard_name) << (64-41-13)
+      uid | next_seq
+    end
   end
 end
