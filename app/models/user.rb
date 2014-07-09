@@ -1,17 +1,14 @@
 class User < ActiveRecord::Base
   include Sharting::Identification
 
-  has_many :vehicles
+  has_many :vehicles, dependent: :destroy
 
-  after_create :replicate_to_hbase
+  after_save    :replicate_to_hbase, unless: :destroyed?
+  after_touch   :replicate_to_hbase, unless: :destroyed?
+  after_destroy :remove_from_hbase
 
   def self.authenticate(email, password)
-    hbase_user = HbaseUser.find(email)  rescue nil
-    if hbase_user && hbase_user.crypted_password == encrypt_password(password)
-      User.find_by_email(email)
-    else
-      nil
-    end
+    User.find_by_email_and_crypted_password(email, encrypt_password(password))
   end
 
   def self.encrypt_password(password)
@@ -23,11 +20,12 @@ class User < ActiveRecord::Base
   end
 
   def replicate_to_hbase
-    [id,email].each {|key|
-      HbaseUser.create(key.to_s,{:name => "data:sharded_id", :value =>"#{id}" })
-      HbaseUser.create(key.to_s,{:name => "data:email", :value =>"#{email}" })
-      HbaseUser.create(key.to_s,{:name => "data:crypted_password", :value =>"#{crypted_password}" })
-    }
+    ReplicatedUser.replicate(self)
+  end
+
+  def remove_from_hbase
+    replicated = ReplicatedUser.find(email)
+    replicated.destroy
   end
 
   def serializable_hash(*)

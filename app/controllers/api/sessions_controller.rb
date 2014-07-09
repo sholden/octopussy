@@ -13,7 +13,6 @@ module Api
 
     def destroy
       self.current_user = nil
-      session[:user_email] = nil
 
       respond_to do |format|
         format.json { render nothing: true, status: :no_content }

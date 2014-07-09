@@ -28,12 +28,12 @@ class ApplicationController < ActionController::Base
 
   def current_user
     unless defined?(@current_user)
-      @current_user = if session['X-Authentication-Token']
-                        token = AuthenticationToken.parse(session['X-Authentication-Token'])
-                        Sharting.using_key(token.user_email){ token.user }
-                      elsif session[:user_email]
-                        Sharting.using_key(session[:user_email]) { User.find_by_email(session[:user_email]) }
-                      end
+      token = if session[:token]
+                session[:token]
+              elsif request.headers['X-Authentication-Token'].present?
+                AuthenticationToken.parse(request.headers['X-Authentication-Token'])
+              end
+      @current_user = Sharting.using(token.current_shard){ token.user } if token
     end
     @current_user
   end
@@ -58,7 +58,7 @@ class ApplicationController < ActionController::Base
 
   def select_current_user_shard
     if logged_in?
-      Sharting.using_key(current_user.email) { yield }
+      Sharting.using(current_user.current_shard) { yield }
     else
       yield
     end
