@@ -55,6 +55,8 @@ GEM
     coffee-script-source (1.7.0)
     erubis (2.7.0)
     execjs (2.2.1)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
     haml (4.0.5)
       tilt
     hbase-stargate (1.6.1)
@@ -73,6 +75,7 @@ GEM
     method_source (0.8.2)
     mime-types (1.25.1)
     multi_json (1.10.1)
+    multipart-post (2.0.0)
     mysql2 (0.3.16)
     patron (0.4.18)
     polyglot (0.3.5)
@@ -137,6 +140,7 @@ DEPENDENCIES
   ar-octopus!
   bootstrap-sass
   coffee-rails (~> 3.2.1)
+  faraday
   haml
   hbase-stargate
   jquery-rails

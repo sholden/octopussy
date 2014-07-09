@@ -1,6 +1,9 @@
 class SessionsController < ApplicationController
   def create
-    self.current_user = User.authenticate(params[:user_email], params[:password])
+    self.current_user = Sharting.using_key(params[:user_email]) do
+      User.authenticate(params[:user_email], params[:password])
+    end
+
     flash[:error] = 'Invalid login' unless logged_in?
     require_authentication
     session[:user_email] = current_user.email

@@ -1,7 +1,9 @@
 module Api
   class SessionsController < Api::Base
     def create
-      self.current_user = User.authenticate(params[:user_email], params[:password])
+      self.current_user = Sharting.using_key(params[:user_email]) do
+        User.authenticate(params[:user_email], params[:password])
+      end
       require_authentication
 
       respond_to do |format|

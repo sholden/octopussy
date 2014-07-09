@@ -29,11 +29,19 @@ Octopussy::Application.routes.draw do
 
   #/sessions
 
+  namespace :api do
+    resources :sessions, only: [:create, :new] do
+      delete '', on: :collection, to: 'sessions#destroy'
+    end
+
+    resources :users, constraints: { id: /[^\/]+/ }, only: :show
+  end
+
   resources :sessions, only: [:create, :new] do
     delete '', on: :collection, to: 'sessions#destroy'
   end
 
-  resources :vehicles
+  resources :vehicles, only: [:index, :show]
 
   root to: 'vehicles#index'
 

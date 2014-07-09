@@ -18,7 +18,6 @@ class User < ActiveRecord::Base
     self.crypted_password = self.class.encrypt_password(password)
   end
 
-
   def hbase_stuff
     [id,email].each {|key|
       HbaseUser.create(key.to_s,{:name => "data:sharded_id", :value =>"#{id}" })
@@ -26,5 +25,7 @@ class User < ActiveRecord::Base
       HbaseUser.create(key.to_s,{:name => "data:crypted_password", :value =>"#{crypted_password}" })
     }
 
+  def serializable_hash(*)
+    super.merge(vehicles: vehicles.includes(:prices, :options).map(&:serializable_hash))
   end
 end
