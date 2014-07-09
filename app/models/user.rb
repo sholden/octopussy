@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   def self.authenticate(email, password)
     hbase_user = HbaseUser.find(email)  rescue nil
     if hbase_user && hbase_user.crypted_password == encrypt_password(password)
-      {id: hbase_user.sharded_id.to_i}
+      User.find_by_email(email)
     else
       nil
     end
