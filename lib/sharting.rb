@@ -7,16 +7,22 @@ module Sharting
 
   def self.using_key(key, &block)
     older_key = self.current_key
-    older_shard_number = self.current_shard_number
 
     begin
       self.current_key = key
-      self.current_shard_number = shard_number(key)
-      using(shard_name(self.current_shard_number), &block)
+      using(shard_name(calculate_shard_number(key)), &block)
     ensure
       self.current_key = older_key
-      self.current_shard_number = older_shard_number
     end
+  end
+
+  def self.using(shard, &block)
+    Octopus.using(shard, &block)
+  end
+
+  def self.current_shard
+    conn = ActiveRecord::Base.connection
+    conn.current_shard if conn.is_a?(Octopus::Proxy)
   end
 
   def self.current_key
@@ -45,10 +51,6 @@ module Sharting
 
   def self.calculate_shard_number(key)
     Digest::SHA1.hexdigest(key).to_i(16) % number_of_shards
-  end
-
-  def self.using(shard, &block)
-    Octopus.using(shard, &block)
   end
 
   def self.each(using: shard_names)
