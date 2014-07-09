@@ -8,12 +8,7 @@ class User < ActiveRecord::Base
   after_destroy :remove_from_hbase
 
   def self.authenticate(email, password)
-    hbase_user = ReplicatedUser.find(email)  rescue nil
-    if hbase_user && hbase_user.crypted_password == encrypt_password(password)
-      {id: hbase_user.sharded_id.to_i}
-    else
-      nil
-    end
+    User.find_by_email_and_crypted_password(email, encrypt_password(password))
   end
 
   def self.encrypt_password(password)

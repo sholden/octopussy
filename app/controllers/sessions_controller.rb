@@ -1,12 +1,10 @@
 class SessionsController < ApplicationController
   def create
-    self.current_user = Sharting.using_key(params[:user_email]) do
-      User.authenticate(params[:user_email], params[:password])
-    end
+    self.current_user = Authenticator.authenticate(params[:user_email], params[:password])
 
     flash[:error] = 'Invalid login' unless logged_in?
     require_authentication
-    session[:user_email] = current_user.email
+    session[:token] = AuthenticationToken.build(self.current_user)
 
     respond_to do |format|
       format.json { render json: session_json, status: :created }
@@ -16,7 +14,7 @@ class SessionsController < ApplicationController
 
   def destroy
     self.current_user = nil
-    session[:user_email] = nil
+    session[:token] = nil
 
     respond_to do |format|
       format.html { redirect_to new_session_path }

@@ -8,7 +8,7 @@ class AuthenticationToken
   end
 
   def self.build(user)
-    new({'user_email' => user.email})
+    new({'user_email' => user.email, 'current_shard' => user.current_shard})
   end
 
   def initialize(token_hash)
@@ -17,6 +17,10 @@ class AuthenticationToken
 
   def user_email
     @token_hash['user_email']
+  end
+
+  def current_shard
+    @token_hash['current_shard']
   end
 
   def user
