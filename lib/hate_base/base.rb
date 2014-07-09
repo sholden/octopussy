@@ -61,8 +61,6 @@ module HateBase
     def save(options = {})
       key = options[:key] || self.key
       data = serializable_data
-      puts data.inspect
-      puts "Saving #{table.to_s} #{key.to_s} #{data.to_s}"
       connection.create_row(table.to_s, key.to_s, Time.now.to_i, data)
       @persisted = true
     rescue
