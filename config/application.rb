@@ -59,7 +59,7 @@ module Octopussy
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    config.number_of_shards = 4
+    config.number_of_shards = 1024
     config.stargate_url = "http://localhost:8080"
   end
 end
