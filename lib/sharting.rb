@@ -7,17 +7,16 @@ module Sharting
 
   def self.using_key(key, &block)
     older_key = self.current_key
+    older_shard_number = self.current_shard_number
 
     begin
       self.current_key = key
-      using(shard_name(calculate_shard_number(key)), &block)
+      self.current_shard_number = shard_number(key)
+      using(shard_name(self.current_shard_number), &block)
     ensure
       self.current_key = older_key
+      self.current_shard_number = older_shard_number
     end
-  end
-
-  def self.current_shard
-    Octopus.current_shard
   end
 
   def self.current_key
@@ -92,10 +91,9 @@ module Sharting
     using(shard_name) do
       sql = 'select shard_nextval() as next_seq, now_msec() as msec'
       next_seq, msec = ActiveRecord::Base.connection.execute(sql).first
-
       uid = msec.to_i << (64-41)
       uid |= shard_number_for_shard(shard_name) << (64-41-13)
-      uid | next_seq
+      uid | (next_seq % next_seq_modulus)
     end
   end
 end

@@ -6,7 +6,12 @@ class User < ActiveRecord::Base
   after_create :replicate_to_hbase
 
   def self.authenticate(email, password)
-    User.find_by_email_and_crypted_password(email, encrypt_password(password))
+    hbase_user = HbaseUser.find(email)  rescue nil
+    if hbase_user && hbase_user.crypted_password == encrypt_password(password)
+      {id: hbase_user.sharded_id.to_i}
+    else
+      nil
+    end
   end
 
   def self.encrypt_password(password)
