@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/sholden/octopus.git
-  revision: 41157e7c60d89ffb624617ebec59924ab5111fbd
+  revision: 63d95e8761d99d5960edfd5554dc926fd380f3ff
   branch: multi_db_connection_pools
   specs:
     ar-octopus (0.8.1)

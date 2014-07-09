@@ -1,7 +1,6 @@
-require 'stargate'
-
 class HbaseUser
-  attr_accessor :row,:columns,:attributes
+  attr_accessor :row, :columns, :attributes
+
   def initialize(row)
     @row = row
     @columns = row.columns
