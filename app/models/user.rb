@@ -3,10 +3,10 @@ class User < ActiveRecord::Base
 
   has_many :vehicles, dependent: :destroy
 
-  after_create :replicate_to_hbase
+  after_save :replicate_to_hbase
 
   def self.authenticate(email, password)
-    hbase_user = HbaseUser.find(email)  rescue nil
+    hbase_user = ReplicatedUser.find(email)  rescue nil
     if hbase_user && hbase_user.crypted_password == encrypt_password(password)
       {id: hbase_user.sharded_id.to_i}
     else
@@ -23,11 +23,7 @@ class User < ActiveRecord::Base
   end
 
   def replicate_to_hbase
-    [id,email].each {|key|
-      HbaseUser.create(key.to_s,{:name => "data:sharded_id", :value =>"#{id}" })
-      HbaseUser.create(key.to_s,{:name => "data:email", :value =>"#{email}" })
-      HbaseUser.create(key.to_s,{:name => "data:crypted_password", :value =>"#{crypted_password}" })
-    }
+    ReplicatedUser.replicate(self)
   end
 
   def serializable_hash(*)

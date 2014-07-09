@@ -60,6 +60,5 @@ module Octopussy
     config.assets.version = '1.0'
 
     config.number_of_shards = 4
-    config.stargate_url = "http://localhost:8080"
   end
 end
