@@ -81,13 +81,16 @@ module Sharting
     Rails.configuration.number_of_shards
   end
 
+  def self.next_seq_modulus
+    1024
+  end
+
   def self.generate_uid
     raise 'Not on a shard!' unless current_shard_number
     sql = 'select shard_nextval() as next_seq, now_msec() as msec'
     next_seq, msec = ActiveRecord::Base.connection.execute(sql).first
-
     uid = msec.to_i << (64-41)
     uid |= current_shard_number << (64-41-13)
-    uid | next_seq
+    uid | (next_seq % next_seq_modulus)
   end
 end
