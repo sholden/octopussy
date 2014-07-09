@@ -7,6 +7,7 @@ class ReplicatedUser < HateBase::Base
   column :current_shard,    type: :string,  family: :data
 
   def self.replicate(user)
-    create!(user.attributes.slice(*columns.keys.map(&:to_s)))
+    attributes = Hash[columns.keys.map{|k| [k, user.send(k).to_s]}]
+    create(attributes)
   end
 end

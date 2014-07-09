@@ -60,7 +60,10 @@ module HateBase
 
     def save(options = {})
       key = options[:key] || self.key
-      connection.create_row(table.to_s, key.to_s, Time.now.to_i, serializable_data)
+      data = serializable_data
+      puts data.inspect
+      puts "Saving #{table.to_s} #{key.to_s} #{data.to_s}"
+      connection.create_row(table.to_s, key.to_s, Time.now.to_i, data)
       @persisted = true
     rescue
       false
@@ -70,8 +73,19 @@ module HateBase
       raise 'Save failed' unless save
     end
 
+    def destroy(options = {})
+      key = options[:key] || self.key
+      connection.delete_row(table.to_s, key.to_s)
+      @persisted = false
+      @destroyed = true
+    end
+
     def persisted?
       @persisted
+    end
+
+    def destroyed?
+      @destroyed
     end
 
     def attributes

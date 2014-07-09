@@ -3,7 +3,9 @@ class User < ActiveRecord::Base
 
   has_many :vehicles, dependent: :destroy
 
-  after_save :replicate_to_hbase
+  after_save    :replicate_to_hbase, unless: :destroyed?
+  after_touch   :replicate_to_hbase, unless: :destroyed?
+  after_destroy :remove_from_hbase
 
   def self.authenticate(email, password)
     hbase_user = ReplicatedUser.find(email)  rescue nil
@@ -24,6 +26,11 @@ class User < ActiveRecord::Base
 
   def replicate_to_hbase
     ReplicatedUser.replicate(self)
+  end
+
+  def remove_from_hbase
+    replicated = ReplicatedUser.find(email)
+    replicated.destroy
   end
 
   def serializable_hash(*)
