@@ -2,7 +2,7 @@ module Api
   class UsersController < Api::Base
     def show
       replicated_user = ReplicatedUser.find(params[:id])
-      user = replicated_user && Sharting.using_key(replicated_user.current_shard) do
+      user = replicated_user && Sharting.using(replicated_user.current_shard) do
         User.find_by_email!(replicated_user.email)
       end
 
