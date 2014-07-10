@@ -16,3 +16,4 @@
 /log/*.log
 /tmp
 /data/*.csv
+/vendor/hbase*

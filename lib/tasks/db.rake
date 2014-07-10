@@ -29,3 +29,9 @@ namespace :db do
     Sharting.each { User.update_all(crypted_password: User.encrypt_password('password')) }
   end
 end
+
+task :dosomething => :environment do
+  user = Sharting.using_key('asdf') { User.first }
+  user.email = 'scott@carwoo.com'
+  user.save
+end
