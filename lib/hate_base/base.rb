@@ -36,7 +36,7 @@ module HateBase
 
     def self.find(key)
       row = connection.show_row(table.to_s, key)
-      return nill unless row
+      return nil unless row
       new(parse_row(row), persisted: true)
     rescue Stargate::RowNotFoundError
       nil

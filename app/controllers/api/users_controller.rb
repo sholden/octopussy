@@ -1,10 +1,15 @@
 module Api
   class UsersController < Api::Base
     def show
-      user = Sharting.using_key(params[:id]) { User.find_by_email!(params[:id]) }
+      replicated_user = ReplicatedUser.find(params[:id])
+      user = replicated_user && Sharting.using_key(replicated_user.current_shard) do
+        User.find_by_email!(replicated_user.email)
+      end
+
+      raise ActiveRecord::RecordNotFound unless user
 
       respond_to do |format|
-        format.json { render json: {user: user, shard: Sharting.shard_for_key(user.email)} }
+        format.json { render json: {user: user, shard: user.current_shard} }
       end
     end
   end
