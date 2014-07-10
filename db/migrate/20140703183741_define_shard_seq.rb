@@ -3,8 +3,9 @@ class DefineShardSeq < ActiveRecord::Migration
 
   def build_client
     config = connection.pool.spec.config.slice(:username, :password, :host, :port, :database)
-    config[:database] ||= Sharting.database_name(Thread.current["octopus.current_shard"] || :master)
+    config[:database] ||= Sharting.database_name(Sharting.current_shard)
     config[:flags] = Mysql2::Client::MULTI_STATEMENTS | Mysql2::Client::FOUND_ROWS
+    puts "Defining function on #{config.inspect}"
     Mysql2::Client.new(config)
   end
 

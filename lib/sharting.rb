@@ -89,6 +89,7 @@ module Sharting
 
   def self.generate_uid(shard_name = nil)
     shard_name ||= current_shard
+    next_seq_modulus = 1024
     raise 'No shard specified!' unless shard_name
     using(shard_name) do
       sql = 'select shard_nextval() as next_seq, now_msec() as msec'
