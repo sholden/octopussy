@@ -1,25 +1,104 @@
 require 'pathname'
+require 'fileutils'
 
 namespace :bootstrap do
-  task :install => [:install_hbase, :prepare_database] do
-
+  task :run do
+    run
   end
+
+  task :install => [
+    :install_hbase,
+    :prepare_database,
+    :load_data
+  ]
 
   task :install_hbase do
     install_hbase
-    configure_hbase
-    create_hbase_table
   end
 
   task :prepare_database do
-    #Rake::Task['db:shards:drop'].invoke
-    #Rake::Task['db:drop'].invoke
-    Rake::Task['db:create'].invoke rescue nil
-    Rake::Task['db:shards:create'].invoke rescue nil
-    Rake::Task['db:migrate'].invoke
+    Process.wait(fork { exec('rake db:create')})
+    Process.wait(fork { exec('rake db:shards:create')})
+    Process.wait(fork { exec('rake db:migrate')})
+  end
+
+  task :load_data => :environment do
+    run_hbase do
+      loader = DataLoader.new(Rails.root.join('db', 'data.tar.gz'))
+      loader.load!
+    end
+  end
+
+  def run(logger = Logger.new(STDOUT))
+    logger.info "Starting application..."
+    run_hbase(logger) do
+      run_server(logger) do
+        logger.info "Application is running. CTRL-C to stop..."
+        running = true
+        trap('INT') { running = false }
+        while running
+          sleep 1
+        end
+        logger.info "Shutting down..."
+      end
+    end
+  end
+
+  def run_hbase(logger = Logger.new(STDOUT), check_install: true)
+    if check_install && !File.exist?(hbase_installed_path)
+      logger.error "Hbase not installed"
+      return
+    end
+    hbase_start = hbase_path.join('bin', 'start-hbase.sh')
+    hbase_stop = hbase_path.join('bin', 'stop-hbase.sh')
+    hbase_bin = hbase_path.join('bin', 'hbase')
+
+    logger.info "Starting Hbase..."
+    Process.wait(fork { exec(hbase_start.to_s) })
+
+    logger.info "Starting Hbase REST api..."
+    hbase_rest_pid = fork { exec("#{hbase_bin} rest start")}
+
+    yield if block_given?
+
+    logger.info "Stopping Hbase REST api..."
+    Process.kill('INT', hbase_rest_pid)
+    Process.wait(hbase_rest_pid)
+
+    logger.info "Stopping Hbase..."
+    Process.wait(fork { exec(hbase_stop.to_s) })
+  end
+
+  def run_server(logger = Logger.new(STDOUT))
+    rails_server = 'rails s'
+
+    logger.info "Starting Octopussy Server..."
+    octopussy_pid = fork { exec("#{rails_server}") }
+
+    yield if block_given?
+
+    logger.info "Stopping Octopussy Server..."
+    Process.kill('INT', octopussy_pid)
+    Process.wait(octopussy_pid)
   end
 
   def install_hbase(logger = Logger.new(STDOUT))
+    return if File.exist?(hbase_installed_path.to_s)
+    extract_hbase(logger)
+    configure_hbase(logger)
+    run_hbase(check_install: false) { create_hbase_table(logger) }
+    FileUtils.touch(hbase_installed_path.to_s)
+  end
+
+  def hbase_path
+    Pathname.new(Dir.pwd).join('vendor', 'hbase-0.98.3-hadoop2')
+  end
+
+  def hbase_installed_path
+    hbase_path.join('OCTOPUSSY_INSTALLED')
+  end
+
+  def extract_hbase(logger = Logger.new(STDOUT))
     target_path = Pathname.new(Dir.pwd).join('vendor')
     hbase_url = "http://mirrors.sonic.net/apache/hbase/hbase-0.98.3/hbase-0.98.3-hadoop2-bin.tar.gz"
     logger.info "Downloading and extracting Hbase to #{target_path}"
@@ -27,7 +106,6 @@ namespace :bootstrap do
   end
 
   def configure_hbase(logger = Logger.new(STDOUT))
-    hbase_path = Pathname.new(Dir.pwd).join('vendor', 'hbase-0.98.3-hadoop2')
     config_xml = <<-XML
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -47,8 +125,16 @@ namespace :bootstrap do
   end
 
   def create_hbase_table(logger = Logger.new(STDOUT))
-    hbase_bin = Pathname.new(Dir.pwd).join('vendor', 'hbase-0.98.3-hadoop2', 'bin', 'hbase')
+    hbase_bin = hbase_path.join('bin', 'hbase')
+    hbase_migration = Pathname.new(Dir.pwd).join('db', 'hbase_schema.rb')
     logger.info "Creating users table in hbase"
-    puts `echo "create 'users', 'data' | #{hbase_bin} shell"`
+
+    Process.wait(fork do
+      Dir.chdir(hbase_path.to_s) do
+        ENV.delete('RUBYOPT')
+        exec("#{hbase_bin} shell #{hbase_migration}")
+      end
+    end)
   end
 end
+
