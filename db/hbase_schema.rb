@@ -1,0 +1,2 @@
+create 'users', 'data'
+exit
