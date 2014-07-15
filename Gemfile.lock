@@ -53,12 +53,26 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.7.0)
+    elasticsearch (1.0.4)
+      elasticsearch-api (= 1.0.4)
+      elasticsearch-transport (= 1.0.4)
+    elasticsearch-api (1.0.4)
+      multi_json
+    elasticsearch-model (0.1.4)
+      activesupport (> 3)
+      elasticsearch (> 0.4)
+      hashie
+    elasticsearch-rails (0.1.4)
+    elasticsearch-transport (1.0.4)
+      faraday
+      multi_json
     erubis (2.7.0)
     execjs (2.2.1)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
     haml (4.0.5)
       tilt
+    hashie (3.2.0)
     hbase-stargate (1.6.1)
       patron
       yajl-ruby
@@ -140,6 +154,8 @@ DEPENDENCIES
   ar-octopus!
   bootstrap-sass
   coffee-rails (~> 3.2.1)
+  elasticsearch-model
+  elasticsearch-rails
   faraday
   haml
   hbase-stargate
