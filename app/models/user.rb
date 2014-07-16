@@ -1,5 +1,9 @@
 class User < ActiveRecord::Base
   include Sharting::Identification
+  searchkick word_start: [:name]
+  def search_data
+    as_json only: [:name]
+  end
 
   has_many :vehicles, dependent: :destroy
 

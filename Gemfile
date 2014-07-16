@@ -14,7 +14,7 @@ gem 'ar-octopus', require: ['octopus', 'octopus/mysql2_adapter'], git: 'https://
 gem 'bootstrap-sass'
 gem 'haml'
 gem 'faraday'
-gem 'chewy'
+gem 'searchkick'
 
 # Gems used only for assets and not required
 # in production environments by default.

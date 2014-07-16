@@ -63,5 +63,7 @@ module Octopussy
     config.seq_modulus = 1024
 
     config.stargate_url = "http://localhost:8080"
+  
+    config.sharded = true
   end
 end

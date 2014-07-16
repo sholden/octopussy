@@ -1,6 +1,6 @@
 module Sharting
   extend Enumerable
-
+  SHARD_BITMASK = 0b11111111111110000000000
   def self.enabled?
     Octopus.enabled?
   end
@@ -14,6 +14,22 @@ module Sharting
     ensure
       self.current_key = older_key
     end
+  end
+
+  def self.using_uid(uid,&block)
+    older_key = self.current_key
+    shard_id = shard_from_uid(uid)
+    begin
+      self.current_key = uid
+      using(shard_name(shard_id), &block)
+    ensure
+      self.current_key = uid
+    end
+  end
+
+
+  def self.shard_from_uid(uid)
+    (uid & SHARD_BITMASK) >> 10
   end
 
   def self.using(shard, &block)
