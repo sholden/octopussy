@@ -1,6 +1,6 @@
 module Sharting
   extend Enumerable
-
+  SHARD_BITMASK = 0b11111111111110000000000
   def self.enabled?
     Octopus.enabled?
   end
@@ -14,6 +14,22 @@ module Sharting
     ensure
       self.current_key = older_key
     end
+  end
+
+  def self.using_uid(uid,&block)
+    older_key = self.current_key
+    shard_id = shard_from_uid(uid)
+    begin
+      self.current_key = uid
+      using(shard_name(shard_id), &block)
+    ensure
+      self.current_key = uid
+    end
+  end
+
+
+  def self.shard_from_uid(uid)
+    (uid & SHARD_BITMASK) >> 10
   end
 
   def self.using(shard, &block)
@@ -87,6 +103,10 @@ module Sharting
     Rails.configuration.number_of_shards
   end
 
+  def self.seq_modulus
+    Rails.configuration.seq_modulus
+  end
+
   def self.generate_uid(shard_name = nil)
     shard_name ||= current_shard
     next_seq_modulus = 1024
@@ -96,7 +116,7 @@ module Sharting
       next_seq, msec = ActiveRecord::Base.connection.execute(sql).first
       uid = msec.to_i << (64-41)
       uid |= shard_number_for_shard(shard_name) << (64-41-13)
-      uid | (next_seq % next_seq_modulus)
+      uid | (next_seq % seq_modulus)
     end
   end
 end

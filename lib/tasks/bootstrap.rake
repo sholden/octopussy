@@ -1,6 +1,5 @@
 require 'pathname'
 require 'fileutils'
-
 namespace :bootstrap do
   task :run do
     run
@@ -17,6 +16,10 @@ namespace :bootstrap do
   end
 
   task :prepare_database do
+    #Process.wait(fork { exec('mysql.server stop')})
+    #Process.wait(fork { exec('bin/mk-now-msec.sh')})
+    #Process.wait(fork { exec('mysql.server stop')})
+    #Process.wait(fork { exec('mysql.server start')})
     Process.wait(fork { exec('rake db:create')})
     Process.wait(fork { exec('rake db:shards:create')})
     Process.wait(fork { exec('rake db:migrate')})
