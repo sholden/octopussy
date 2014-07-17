@@ -12,6 +12,10 @@ namespace :bootstrap do
     :load_data
   ]
 
+  task :install_elastic_search do
+    install_elastic_search
+  end
+
   task :install_hbase do
     install_hbase
   end
@@ -31,15 +35,17 @@ namespace :bootstrap do
 
   def run(logger = Logger.new(STDOUT))
     logger.info "Starting application..."
-    run_hbase(logger) do
-      run_server(logger) do
-        logger.info "Application is running. CTRL-C to stop..."
-        running = true
-        trap('INT') { running = false }
-        while running
-          sleep 1
+    run_elastic_search(logger) do
+      run_hbase(logger) do
+        run_server(logger) do
+          logger.info "Application is running. CTRL-C to stop..."
+          running = true
+          trap('INT') { running = false }
+          while running
+            sleep 1
+          end
+          logger.info "Shutting down..."
         end
-        logger.info "Shutting down..."
       end
     end
   end
@@ -80,6 +86,40 @@ namespace :bootstrap do
     logger.info "Stopping Octopussy Server..."
     Process.kill('INT', octopussy_pid)
     Process.wait(octopussy_pid)
+  end
+
+  def elastic_search_path
+    Pathname.new(Dir.pwd).join('vendor', 'elasticsearch-1.2.2')
+  end
+
+  def elastic_search_installed_path
+    elastic_search_path.join('OCTOPUSSY_INSTALLED')
+  end
+
+  def install_elastic_search(logger = Logger.new(STDOUT))
+    return if File.exist?(elastic_search_installed_path.to_s)
+    extract_elastic_search(logger)
+    FileUtils.touch(elastic_search_installed_path.to_s)
+  end
+
+  def extract_elastic_search(logger = Logger.new(STDOUT))
+    target_path = Pathname.new(Dir.pwd).join('vendor')
+    elastic_search_url = 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.2.tar.gz'
+    logger.info "Downloading and extracting ElasticSearch to #{target_path}"
+    `curl #{elastic_search_url} | (cd #{target_path}; tar -xzf -)`
+  end
+
+  def run_elastic_search(logger = Logger.new(STDOUT))
+    raise 'ElasticSearch not installed' unless File.exist?(elastic_search_installed_path.to_s)
+    elastic_search_bin = elastic_search_path.join('bin', 'elasticsearch')
+    logger.info "Starting ElasticSearch..."
+    elastic_search_pid = fork { exec("#{elastic_search_bin}") }
+
+    yield if block_given?
+
+    logger.info "Stopping ElasticSearch"
+    Process.kill('INT', elastic_search_pid)
+    Process.wait(elastic_search_pid)
   end
 
   def install_hbase(logger = Logger.new(STDOUT))

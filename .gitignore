@@ -16,4 +16,5 @@
 /log/*.log
 /tmp
 /data/*.csv
+/vendor/elasticsearch*
 /vendor/hbase*
