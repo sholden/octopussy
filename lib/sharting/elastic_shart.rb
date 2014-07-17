@@ -27,15 +27,20 @@ module Sharting
     end
 
     class Query < Searchkick::Query
-      def initialize(klass, term, options = {})
-        options[:select] = Array(options[:select]) << :current_shard
-        super
+      # def initialize(klass, term, options = {})
+      #   options[:fields] = Array(options[:fields]) << :current_shard
+      #   super
+      # end
+
+      def execute
+        searchkick_results = super
+        Results.new(searchkick_results.klass, searchkick_results.response, searchkick_results.options)
       end
 
-      private
-
-      def build_results(response, opts)
-        ElasticShart::Results.new(searchkick_klass, response, opts)
+      def params
+        super.tap do |base|
+          base[:body][:fields] << :current_shard unless base[:body][:fields].include?(:current_shard)
+        end
       end
     end
 
@@ -46,9 +51,8 @@ module Sharting
             # results can have different types
             results = Hash.new{|hash, key| hash[key] = []}
 
-            hits.group_by{|hit, i| [hit["_type"], hit["current_shard"]] }.each do |(type, shard), grouped_hits|
-              #TODO: Need to pull current shard from hits, but not returning yet.
-              Sharting.each do
+            hits.group_by{|hit, i| [hit["_type"], hit["fields"]["current_shard"].first] }.each do |(type, shard), grouped_hits|
+              Sharting.using(shard.to_sym) do
                 records = type.camelize.constantize
                 if options[:includes]
                   records = records.includes(options[:includes])
