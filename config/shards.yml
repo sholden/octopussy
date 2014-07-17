@@ -16,7 +16,7 @@ octopus:
 (0...Sharting.number_of_shards).each.map do |id|
 <<-SHARD
       shard_#{id}:
-        database: octopussy_shard_#{id}
+        database: shard_demo_#{id}
         shared_pool: true
         <<: *mysql
 SHARD

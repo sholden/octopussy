@@ -3,7 +3,7 @@
 -#    %span.glyphicon.glyphicon-plus
 -#    New Vehicle
 %h2
-  Vehicles
+  Vehicles for #{@user.name}
 
 %table.table.table-striped
   %thead
@@ -16,7 +16,7 @@
   %tbody
     - @vehicles.each do |vehicle|
       %tr
-        %td= link_to(vehicle.id, vehicle)
+        %td= link_to(vehicle.id, user_vehicle_path(@user.email, vehicle.id))
         %td= vehicle.year
         %td= vehicle.make
         %td= vehicle.model
