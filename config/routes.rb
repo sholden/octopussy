@@ -41,7 +41,10 @@ Octopussy::Application.routes.draw do
     delete '', on: :collection, to: 'sessions#destroy'
   end
 
-  resources :vehicles, only: [:index, :show]
+  resources :users, constraints: { id: /[^\/]+/ }, only: [:show] do
+    get 'search', on: :collection, to: 'users#search'
+    resources :vehicles, only: [:index, :show]
+  end
 
   root to: 'vehicles#index'
 

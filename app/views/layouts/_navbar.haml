@@ -10,7 +10,9 @@
     - if logged_in?
       .navbar-collapse.collapse
         %ul.nav.navbar-nav
-          = navbar_link_to 'Vehicles', :vehicles, :index
+          = navbar_link_to 'Vehicles', :vehicles, :index, user_id: current_user.email
           = navbar_link_to 'Sign Out', :sessions, :destroy, {}, method: :delete
-      / /.nav-collapse
-  / /.container-fluid
+        = form_tag search_users_path, id: 'user-search', method: 'get', role: 'search', class: 'navbar-form navbar-form-left' do |f|
+          .form-group
+            = text_field_tag :q, params[:q], placeholder: 'User Search', class: 'form-control typeahead'
+            -#= button_tag 'Submit', type: 'submit', class: 'btn btn-default'

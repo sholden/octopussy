@@ -1,0 +1,15 @@
+%h2
+  Users
+
+%table.table.table-striped
+  %thead
+    %tr
+      %th Name
+      %th Email
+      %th Current Shard
+  %tbody
+    - @users.each do |user|
+      %tr
+        %td= link_to(user.name, user_vehicles_path(user.email ))
+        %td= user.email
+        %td= user.current_shard

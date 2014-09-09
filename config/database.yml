@@ -1,6 +1,6 @@
 development:
   adapter: mysql2
-  database: octopussy_development
+  database: shard_demo
   username: root
   pool: 5
   timeout: 5000

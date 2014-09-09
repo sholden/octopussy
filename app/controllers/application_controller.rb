@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
     @current_user
   end
 
-  helper_method
+  helper_method :current_user
 
   def current_user=(user)
     @current_user = user

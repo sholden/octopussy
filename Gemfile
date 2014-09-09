@@ -14,6 +14,7 @@ gem 'ar-octopus', require: ['octopus', 'octopus/mysql2_adapter'], git: 'https://
 gem 'bootstrap-sass'
 gem 'haml'
 gem 'faraday'
+gem 'searchkick'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -28,6 +29,11 @@ group :assets do
 end
 
 gem 'jquery-rails'
+
+group :development do
+  gem 'better_errors'
+  gem 'binding_of_caller'
+end
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
