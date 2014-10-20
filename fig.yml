@@ -1,0 +1,35 @@
+db:
+  build: vendor/containers/mariadb
+  ports:
+    - "3306:3306"
+#  volumes:
+#    - ./vendor/containers/mariadb/data:/data
+  environment:
+    USER: shard_demo
+    PASS: shard_demo
+    DATA_DIR: /data
+hbase:
+  build: vendor/containers/hbase
+  ports:
+    - "8080:8080"
+elasticsearch:
+  image: dockerfile/elasticsearch
+  volumes:
+    - ./vendor/containers/elasticsearch/data:/data
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+web:
+  build: .
+  command: bundle exec rails s
+  ports:
+    - "3000:3000"
+  volumes:
+    - .:/shard_demo
+  environment:
+    ELASTICSEARCH_URL: http://elasticsearch:9200
+  links:
+    - db
+    - hbase
+    - elasticsearch
+

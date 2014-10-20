@@ -89,7 +89,7 @@ module Sharting
 
   def self.generate_uid(shard_name = nil)
     shard_name ||= current_shard
-    next_seq_modulus = 1024 #TOOD: Should this be number of shards?
+    next_seq_modulus = 4 #TOOD: Should this be number of shards?
     raise 'No shard specified!' unless shard_name
     using(shard_name) do
       sql = 'select shard_nextval() as next_seq, now_msec() as msec'
