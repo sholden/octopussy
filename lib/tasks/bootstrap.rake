@@ -8,6 +8,7 @@ namespace :bootstrap do
 
   task :install => [
     :prepare_database,
+    :prepare_hbase,
     :load_data
   ]
 
@@ -20,6 +21,10 @@ namespace :bootstrap do
   task :load_data => :environment do
     loader = DataLoader.new(Rails.root.join('db', 'data.tar.gz'))
     loader.load!
+  end
+
+  task :prepare_hbase => :environment do
+    HateBase::Base.connection.create_table('users', 'data')
   end
 end
 

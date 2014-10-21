@@ -4,9 +4,9 @@ class User < ActiveRecord::Base
 
   has_many :vehicles, dependent: :destroy
 
-  after_save    :replicate_to_hbase, unless: :destroyed?
-  after_touch   :replicate_to_hbase, unless: :destroyed?
-  after_destroy :remove_from_hbase
+  after_save    :replicate_to_hbase
+  after_touch   :replicate_to_hbase
+  after_destroy :replicate_to_hbase
 
   searchkick
 
@@ -22,20 +22,19 @@ class User < ActiveRecord::Base
     self.crypted_password = self.class.encrypt_password(password)
   end
 
-  def replicate_to_hbase
-    ReplicatedUser.replicate(self)
-  end
-
-  def remove_from_hbase
-    replicated = ReplicatedUser.find(email)
-    replicated.destroy
-  end
-
   def serializable_hash(*)
     super.merge(vehicles: vehicles.includes(:prices, :options).map(&:serializable_hash))
   end
 
   def search_data
     {id: id.to_s, name: name, email: email, current_shard: current_shard}
+  end
+
+  def replicate_to_hbase
+    ReplicationJob.perform_async(email, current_shard)
+  end
+
+  def reindex
+    ReindexJob.perform_async('User', id, current_shard)
   end
 end

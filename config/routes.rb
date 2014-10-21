@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 Octopussy::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -45,6 +47,9 @@ Octopussy::Application.routes.draw do
     get 'search', on: :collection, to: 'users#search'
     resources :vehicles, only: [:index, :show]
   end
+
+
+  mount Sidekiq::Web => '/sidekiq'
 
   root to: 'vehicles#index'
 

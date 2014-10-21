@@ -48,13 +48,19 @@ class DataLoader
         vehicle_id = vehicle_attributes.delete(:id)
         vehicle = current_user.vehicles.create!(vehicle_attributes.except(:user_id))
 
+        while next_price_vehicle_id && next_option_vehicle_id < vehicle_id
+          next_price_vehicle_id, next_price_group = price_groups.next
+        end
+
         if next_price_vehicle_id == vehicle_id
           next_price_group.each do |price_row|
             price_attributes = price_row.to_hash.except(:vehicle_id)
             vehicle.prices.create!(price_attributes)
           end
+        end
 
-          next_price_vehicle_id, next_price_group = price_groups.next
+        while next_option_vehicle_id && next_option_vehicle_id < vehicle_id
+          next_option_vehicle_id, next_option_group = option_groups.next
         end
 
         if next_option_vehicle_id == vehicle_id
@@ -62,8 +68,6 @@ class DataLoader
             option_attributes = option_row.to_hash.except(:vehicle_id)
             vehicle.options.create!(option_attributes)
           end
-
-          next_option_vehicle_id, next_option_group = option_groups.next
         end
 
         vehicle.save!
