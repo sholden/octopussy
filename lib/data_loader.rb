@@ -15,7 +15,6 @@ class DataLoader
   end
 
   def load!
-
     buyer_map = {}
 
     buyer_csv.each do |buyer_row|
@@ -48,8 +47,12 @@ class DataLoader
         vehicle_id = vehicle_attributes.delete(:id)
         vehicle = current_user.vehicles.create!(vehicle_attributes.except(:user_id))
 
-        while next_price_vehicle_id && next_option_vehicle_id < vehicle_id
-          next_price_vehicle_id, next_price_group = price_groups.next
+        while next_price_vehicle_id && next_price_vehicle_id < vehicle_id
+          begin
+            next_price_vehicle_id, next_price_group = price_groups.next
+          rescue StopIteration
+            next_price_vehicle_id, next_price_group = nil, nil
+          end
         end
 
         if next_price_vehicle_id == vehicle_id
@@ -60,7 +63,11 @@ class DataLoader
         end
 
         while next_option_vehicle_id && next_option_vehicle_id < vehicle_id
-          next_option_vehicle_id, next_option_group = option_groups.next
+          begin
+            next_option_vehicle_id, next_option_group = option_groups.next
+          rescue StopIteration
+            next_option_vehicle_id, next_option_group = nil, nil
+          end
         end
 
         if next_option_vehicle_id == vehicle_id
@@ -114,21 +121,20 @@ class DataLoader
     grouping_key_value = nil
     grouped_items = []
 
-    while next_price = csv.shift
-      grouping_key_value ||= next_price[key]
-      if grouping_key_value == next_price[key]
-        grouped_items << next_price
+    while next_row = csv.shift
+      puts next_row.inspect
+      grouping_key_value ||= next_row[key]
+      if grouping_key_value == next_row[key]
+        grouped_items << next_row
       else
         yield(grouping_key_value, grouped_items)
-        grouping_key_value = next_price[key]
-        grouped_items = [next_price]
+        grouping_key_value = next_row[key]
+        grouped_items = [next_row]
       end
     end
 
     if grouped_items.any?
       yield(grouping_key_value, grouped_items)
-    else
-      yield(nil, nil)
     end
   end
 end

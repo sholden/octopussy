@@ -4,10 +4,9 @@ db:
     - "3306:3306"
 #  volumes:
 #    - ./vendor/containers/mariadb/data:/data
-  environment:
-    USER: shard_demo
-    PASS: shard_demo
-    DATA_DIR: /data
+#  environment:
+#    USER: shard_demo
+#    PASS: shard_demo
 hbase:
   build: vendor/containers/hbase
   ports:
