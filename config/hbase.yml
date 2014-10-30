@@ -1,4 +1,4 @@
 development:
-  url: http://localhost:8080
+  url: http://hbase:8080
 test:
-  url: http://localhost:8080
+  url: http://hbase:8080

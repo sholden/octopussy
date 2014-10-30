@@ -11,13 +11,15 @@ new physical servers as needed to scale.
 User info is replicated to HBase for analytics and offline processing.
 It is also sent to ElasticSearch for searching across shards.
 
+The replication and indexing is done asynchronously through a Redis queue using Sidekiq.
+
 == Installation
 
-MariaDB will need to be installed on the system. Vendoring that would have gotten messy.
-The DB will need an extension for msec datetimes. Run bin/mk-now-msec.sh to build and install it.
-Finally, run `rake bootstrap:install` to install and vendor HBase and ElasticSearch
+The application is set up to use Fig + Docker to manage containers and dependencies.
+
+Ensure that you have Docker (http://www.docker.com/) and Fig (http://www.fig.sh/) installed.
+Then, pull the code and run `fig run web rake bootstrap:install` to bootstrap your containers.
 
 == Run
 
-To run the application, use `rake bootstrap:run`. This will run all the dependent services as
-well as the rails application at http://localhost:3000.
+Start all application services with `fig up`, then visit http://localhost:3000 to view the app.

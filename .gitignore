@@ -18,3 +18,9 @@
 /data/*.csv
 /vendor/elasticsearch*
 /vendor/hbase*
+
+/vendor/containers/hbase/data/*
+/vendor/containers/mariadb/data/*
+/vendor/containers/redis/data/*
+/vendor/containers/elasticsearch/data/data/*
+/vendor/containers/elasticsearch/data/log/*

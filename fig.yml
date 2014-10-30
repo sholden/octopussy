@@ -1,0 +1,61 @@
+db:
+  build: vendor/containers/mariadb
+  ports:
+    - "3306:3306"
+#  volumes:
+#    - ./vendor/containers/mariadb/data:/data
+  environment:
+    USER: shard_demo
+    PASS: shard_demo
+    DATA_DIR: /data
+hbase:
+  build: vendor/containers/hbase
+  ports:
+    - "8080:8080"
+  volumes:
+    - ./vendor/containers/hbase/data:/data
+elasticsearch:
+  image: dockerfile/elasticsearch
+  volumes:
+    - ./vendor/containers/elasticsearch/data:/data
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+redis:
+  image: dockerfile/redis
+  ports:
+    - "6379:6379"
+  volumes:
+    - ./vendor/containers/redis/data:/data
+
+sidekiq:
+  build: .
+  command: bundle exec sidekiq
+  volumes:
+      - .:/shard_demo
+  environment:
+    ELASTICSEARCH_URL: http://elasticsearch:9200
+    REDIS_URL: redis://redis:6379
+  links:
+    - db
+    - hbase
+    - elasticsearch
+    - redis
+
+web:
+  build: .
+  command: bundle exec rails s
+  ports:
+    - "3000:3000"
+  volumes:
+    - .:/shard_demo
+  environment:
+    ELASTICSEARCH_URL: http://elasticsearch:9200
+    REDIS_URL: redis://redis:6379
+  links:
+    - db
+    - hbase
+    - elasticsearch
+    - redis
+    - sidekiq
+

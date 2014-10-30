@@ -1,20 +1,20 @@
-development:
+default: &default
   adapter: mysql2
-  database: shard_demo
-  username: root
+  encoding: utf8
   pool: 5
-  timeout: 5000
+  host: db
+  username: root
+  password:
+  port: 3306
+
+development:
+  <<: *default
+  database: octopussy_development
 
 test:
-  adapter: mysql2
+  <<: *default
   database: octopussy_test
-  username: root
-  pool: 5
-  timeout: 5000
 
 production:
-  adapter: mysql2
+  <<: *default
   database: octopussy_production
-  username: root
-  pool: 5
-  timeout: 5000

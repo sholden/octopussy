@@ -3,7 +3,8 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.19'
 gem 'rest-client'
 gem 'pry'
-gem 'hbase-stargate', require: 'stargate'
+
+gem 'hbase-stargate', require: 'stargate', git: 'https://github.com/sholden/hbase-stargate.git'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -15,6 +16,9 @@ gem 'bootstrap-sass'
 gem 'haml'
 gem 'faraday'
 gem 'searchkick'
+gem 'sidekiq'
+gem 'sinatra'
+gem 'typhoeus', require: ['typhoeus', 'typhoeus/adapters/faraday']
 
 # Gems used only for assets and not required
 # in production environments by default.

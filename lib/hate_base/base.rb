@@ -11,7 +11,9 @@ module HateBase
 
     def self.establish_connection(options)
       raise 'Not configured' unless options
-      self.connection = Stargate::Client.new(options[:url])
+      self.connection = Stargate::Client.new(options[:url]) do |connection|
+        connection.adapter :typhoeus
+      end
     end
 
     def self.column(name, options = {})

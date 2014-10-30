@@ -16,7 +16,7 @@ class DefineShardSeq < ActiveRecord::Migration
       alter table shard_seq_tbl AUTO_INCREMENT = 10000;
       drop function if exists shard_nextval;
       create function shard_nextval()
-      returns bigint
+      RETURNS bigint NOT DETERMINISTIC
       begin
         insert into shard_seq_tbl values (NULL) ;
         set @R_ObjectId_val=LAST_INSERT_ID() ;
@@ -24,10 +24,17 @@ class DefineShardSeq < ActiveRecord::Migration
         return @R_ObjectId_val ;
       end;
       drop function if exists now_msec;
-      CREATE FUNCTION now_msec RETURNS STRING SONAME "now_msec.so";
+      CREATE FUNCTION now_msec RETURNS STRING SONAME "now_msec.so" ;
     SQL
 
-    build_client.query(sql)
+    client = build_client
+    result = client.query(sql)
+    puts result.inspect if result
+
+    while client.next_result
+      result = client.store_result
+      puts result.inspect if result
+    end
   end
 
   def down
