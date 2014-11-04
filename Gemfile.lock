@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/sholden/hbase-stargate.git
-  revision: 03c6a244879cc4d741d194b459bfab3e67f46b9d
+  revision: 2087c28d2b20708a536db9df75761b7e17366782
   specs:
     hbase-stargate (1.6.1)
       faraday
